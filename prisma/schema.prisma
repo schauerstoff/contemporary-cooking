@@ -8,30 +8,120 @@ datasource db {
 }
 
 model Recipe {
-  id          Int                @id @default(autoincrement())
-  title       String
-  description String?
-  createdAt   DateTime           @default(now()) 
-  image       String?  
-  servings    Int
-  time    Int
-  ingredients RecipeIngredient[]
-}
-
-model Ingredient {
-  id          Int                @id @default(autoincrement())
-  name        String
-  density      Float?  
-  recipes     RecipeIngredient[]
+  id                Int                @id @default(autoincrement())
+  title             String
+  description       String?
+  createdAt         DateTime           @default(now())
+  image             String?
+  servings          Int
+  prepTime          Int
+  waitTime          Int                @default(0)
+  categories        Category[]
+  ingredients       RecipeIngredient[]
+  appliances        KitchenAppliance[]
+  tags              Tag[]
+  steps             RecipeStep[]
+  pricePerPortion   Float
+  kcalPerPortion    Float
+  carbsPerPortion   Float
+  fatPerPortion     Float
+  proteinPerPortion Float
+  glutenFree        Boolean
+  nutFree           Boolean
+  soyFree           Boolean
 }
 
 model RecipeIngredient {
-  id           Int         @id @default(autoincrement())
-  amountGram   Int
-  displayGrams Boolean @default(true)
-  recipe       Recipe      @relation(fields: [recipeId], references: [id])
-  recipeId     Int
-  ingredient   Ingredient  @relation(fields: [ingredientId], references: [id])
-  ingredientId Int
-  @@unique([recipeId, ingredientId]) 
+  id                Int          @id @default(autoincrement())
+  recipe            Recipe       @relation(fields: [recipeId], references: [id])
+  recipeId          Int
+  ingredient        Ingredient   @relation(fields: [ingredientId], references: [id])
+  ingredientId      Int
+  amountGram        Float
+  amountDisplayUnit Float
+  displayUnit       Unit
+  comment           String?
+  recipeStep        RecipeStep[]
+
+  @@unique([recipeId, ingredientId])
+}
+
+model Ingredient {
+  id             Int                @id @default(autoincrement())
+  name           String
+  density        Float?
+  season         Month[]
+  type           IngredientType
+  pricePer100g   Float?
+  kcalPer100g    Float?
+  carbsPer100g   Float?
+  fatPer100g     Float?
+  proteinPer100g Float?
+  glutenFree     Boolean
+  nutFree        Boolean
+  soyFree        Boolean
+  recipes        RecipeIngredient[]
+}
+
+model Category {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  recipes Recipe[]
+}
+
+model KitchenAppliance {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  recipes Recipe[]
+}
+
+model Tag {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  recipes Recipe[]
+}
+
+model Month {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  ingredients Ingredient[]
+}
+
+model RecipeStep {
+  id          Int                @id @default(autoincrement())
+  stepNr      Int
+  instruction String
+  recipe      Recipe             @relation(fields: [recipeId], references: [id])
+  recipeId    Int
+  ingredients RecipeIngredient[]
+}
+
+enum IngredientType {
+  PANTRY
+  FRESH
+}
+
+enum Unit {
+  G
+  KG
+  MG
+  ML
+  L
+  PINCH
+  CUP
+  TBSP
+  TSP
+  PIECE
+  SLICE
+  BLOCK
+  CAN
+  JAR
+  HANDFUL
+  CLOVE
+}
+
+model VolumeUnit {
+  id   Int   @id @default(autoincrement())
+  unit Unit  @unique
+  ml   Float
 }
