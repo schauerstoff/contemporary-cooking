@@ -50,7 +50,7 @@ model Ingredient {
   id             Int                @id @default(autoincrement())
   name           String
   density        Float?
-  season         Month[]
+  season         SeasonMonth[]
   type           IngredientType
   pricePer100g   Float?
   kcalPer100g    Float?
@@ -81,7 +81,7 @@ model Tag {
   recipes Recipe[]
 }
 
-model Month {
+model SeasonMonth {
   id          Int          @id @default(autoincrement())
   name        String       @unique
   ingredients Ingredient[]
