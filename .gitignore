@@ -1,16 +1,32 @@
 # 📦 Node modules & dependencies
 node_modules/
 dist/
+npm-debug.log*
 
 # 🔐 Environment & secrets
 .env
 dev.db
+dev.db-journal
 
-# 🧬 Framework/Tool-specific
+# 🧬 Prisma
 .prisma/
+prisma/generated/
+prisma/migrations/migration_lock.toml
 
-# 🗂️ System files
+# 🗂️ System & Editor files
 .DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+*.tmp
+
+# 🛠 Logs
+*.log
+npm-debug.log*
+
+# ⚙️ TypeScript 
+*.tsbuildinfo
 
 # 📝 Own project folders
 ._notes/
