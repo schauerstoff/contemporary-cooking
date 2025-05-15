@@ -1,2 +1,2 @@
 # contemporary-cooking
-receipes that do not waste your resources 
+receipes that do not waste your time 
