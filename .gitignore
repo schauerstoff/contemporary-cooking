@@ -1,1 +1,16 @@
+# 📦 Node modules & dependencies
+node_modules/
+dist/
+
+# 🔐 Environment & secrets
+.env
+dev.db
+
+# 🧬 Framework/Tool-specific
+.prisma/
+
+# 🗂️ System files
+.DS_Store
+
+# 📝 Own project folders
 ._notes/
