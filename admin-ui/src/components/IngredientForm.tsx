@@ -1,5 +1,20 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { useEffect, useState } from "react";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Checkbox } from "./ui/checkbox";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/components/ui/select";
 
 type IngredientFormData = {
     name: string;
@@ -24,9 +39,16 @@ export default function IngredientForm() {
         handleSubmit,
         watch,
         setValue,
+        control,
         formState: { errors },
     } = useForm<IngredientFormData & { productUnit: "g" | "ml" } & { kcalPer100Unit: number } & { carbsPer100Unit: number } & { fatPer100Unit: number } & { proteinPer100Unit: number }>({
-        defaultValues: { seasons: [], productUnit: "g", }
+        defaultValues: {
+            seasons: [],
+            productUnit: "g",
+            glutenFree: false,
+            nutFree: false,
+            soyFree: false,
+        }
     });
 
     const [ingredientTypes, setIngredientTypes] = useState<string[]>([]);
@@ -84,133 +106,173 @@ export default function IngredientForm() {
 
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <h2 style={{ fontSize: "1.2rem", fontWeight: "bold" }}>Zutat hinzufügen</h2>
+        <Card className="p-6 max-w-xl mx-auto space-y-4">
+            <h2 className="text-xl font-semibold">Zutat hinzufügen</h2>
 
-            <label>
-                name
-                <input {...register("name", { required: true })} />
-                {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
+            <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
 
-            <label>
-                type
-                <select {...register("type")}>
-                    <option value="">– bitte wählen –</option>
-                    {ingredientTypes.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                    ))}
-                </select>
+                <div>
+                    <Label htmlFor="name">name</Label>
+                    <Input id="name" {...register("name", { required: true })} />
+                    {errors.name && (
+                        <p className="text-sm text-red-500">required field</p>
+                    )}
+                </div>
 
-                {errors.type && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
+                <div>
+                    <Label>type</Label>
+                    <Select
+                        onValueChange={(value) => setValue("type", value, { shouldValidate: true })}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="– bitte wählen –" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {ingredientTypes.map((type) => (
+                                <SelectItem key={type} value={type}>
+                                    {type}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    {errors.type && (
+                        <p className="text-sm text-red-500">required field</p>
+                    )}
+                </div>
 
-            {selectedType === "FRESH" && (
-                <fieldset>
-                    <legend>seasons</legend>
-                    {seasonMonths.map((month) => (
-                        <label key={month.id}>
-                            <input type="checkbox" value={month.id} {...register("seasons")} />
-                            {month.name}
-                        </label>
-                    ))}
-                </fieldset>
-            )}
-
-            <label>
-                density (g/ml)
-                <input type="number" step="any" {...register("density", { required: true, valueAsNumber: true })} />
-                {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
-
-            <fieldset>
-                <legend>unit</legend>
-                <label>
-                    <input
-                        type="radio"
-                        value="g"
-                        {...register("productUnit", { required: true })}
-                    />
-                    grams (g)
-                </label>
-
-                <label style={{ marginLeft: "1rem" }}>
-                    <input
-                        type="radio"
-                        value="ml"
-                        {...register("productUnit", { required: true })}
-                    />
-                    milliliter (ml)
-                </label>
-                {errors.productUnit && (
-                    <span style={{ color: "red" }}>Bitte eine Einheit wählen</span>
+                {selectedType === "FRESH" && (
+                    <fieldset className="border p-3 rounded">
+                        <legend className="font-medium">season</legend>
+                        <div className="grid grid-cols-3 gap-2">
+                            {seasonMonths.map((month) => (
+                                <Label key={month.id} className="flex items-center gap-2">
+                                    <Checkbox value={month.id} {...register("seasons")} />
+                                    {month.name}
+                                </Label>
+                            ))}
+                        </div>
+                    </fieldset>
                 )}
-            </fieldset>
 
-            <hr />
+                <hr />
 
-            <label>
-                product size in / 100{productUnit}
-                <input
-                    type="number"
-                    step="any"
-                    {...register("productAmount", { required: true, min: 1, valueAsNumber: true })}
+                <div>
+                    <Label htmlFor="density">density (g/ml)</Label>
+                    <Input
+                        id="density"
+                        type="number"
+                        step="any"
+                        {...register("density", { required: true, valueAsNumber: true })}
+                    />
+                    {errors.type && (
+                        <p className="text-sm text-red-500">required field</p>
+                    )}
+                </div>
+                {/* 
+                <div>
+                    <Label>unit</Label>
+                    <RadioGroup defaultValue="g" className="flex gap-4">
+                        <Label className="flex items-center gap-2">
+                            <RadioGroupItem value="g" {...register("productUnit")} /> grams (g)
+                        </Label>
+                        <Label className="flex items-center gap-2">
+                            <RadioGroupItem value="ml" {...register("productUnit")} /> milliliter (ml)
+                        </Label>
+                    </RadioGroup>
+                </div> */}
+
+                <Controller
+                    name="productUnit"
+                    control={control}
+                    render={({ field }) => (
+                        <RadioGroup
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            className="flex gap-4"
+                        >
+                            <Label className="flex items-center gap-2">
+                                <RadioGroupItem value="g" /> grams (g)
+                            </Label>
+                            <Label className="flex items-center gap-2">
+                                <RadioGroupItem value="ml" /> milliliter (ml)
+                            </Label>
+                        </RadioGroup>
+                    )}
                 />
-                {errors.productAmount && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
 
-            <label>
-                product price in €
-                <input
-                    type="number"
-                    step="any"
-                    {...register("productPrice", { required: true, min: 0.01, valueAsNumber: true })}
-                />
-                {errors.productPrice && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
 
-            <label>
-                kcal / 100{productUnit}
-                <input type="number" step="any" {...register("kcalPer100Unit", { required: true, valueAsNumber: true })} />
-                {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
+                <hr />
 
-            <label>
-                carbs / 100{productUnit}
-                <input type="number" step="any" {...register("carbsPer100Unit", { required: true, valueAsNumber: true })} />
-                {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
+                <div>
+                    <Label>product size in {productUnit}</Label>
+                    <Input type="number" step="any" {...register("productAmount", { required: true, min: 1, valueAsNumber: true })} />
+                    {errors.type && (
+                        <p className="text-sm text-red-500">required field</p>
+                    )}
+                </div>
 
-            <label>
-                fat / 100{productUnit}
-                <input type="number" step="any" {...register("fatPer100Unit", { required: true, valueAsNumber: true })} />
-                {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
 
-            <label>
-                protein / 100{productUnit}
-                <input type="number" step="any" {...register("proteinPer100Unit", { required: true, valueAsNumber: true })} />
-                {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
+                <div>
+                    <Label>product price in €</Label>
+                    <Input type="number" step="any" {...register("productPrice", { required: true, min: 0.01, valueAsNumber: true })} />
+                </div>
 
-            <label>
-                <input type="checkbox" {...register("glutenFree")} />
-                gluten-free
-                {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
+                <hr />
 
-            <label>
-                <input type="checkbox" {...register("nutFree")} />
-                nut-free
-                {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
-            </label>
+                <div>
+                    <Label>kcal / 100{productUnit}</Label>
+                    <Input type="number" step="any" {...register("kcalPer100Unit", { required: true, valueAsNumber: true })} />
+                </div>
+                <div>
+                    <Label>carbs / 100{productUnit}</Label>
+                    <Input type="number" step="any" {...register("carbsPer100Unit", { required: true, valueAsNumber: true })} />
+                </div>
+                <div>
+                    <Label>fat / 100{productUnit}</Label>
+                    <Input type="number" step="any" {...register("fatPer100Unit", { required: true, valueAsNumber: true })} />
+                </div>
+                <div>
+                    <Label>protein / 100{productUnit}</Label>
+                    <Input type="number" step="any" {...register("proteinPer100Unit", { required: true, valueAsNumber: true })} />
+                </div>
 
-            <label>
-                <input type="checkbox" {...register("soyFree")} />
-                soy-free
-            </label>
+                <hr />
 
-            <button type="submit">Zutat speichern</button>
-        </form>
+                <div className="flex flex-col gap-2">
+                    <Controller
+                        name="glutenFree"
+                        control={control}
+                        render={({ field }) => (
+                            <Label className="flex items-center gap-2">
+                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                gluten-free
+                            </Label>
+                        )}
+                    />
+                    <Controller
+                        name="nutFree"
+                        control={control}
+                        render={({ field }) => (
+                            <Label className="flex items-center gap-2">
+                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                nut-free
+                            </Label>
+                        )}
+                    />
+                    <Controller
+                        name="soyFree"
+                        control={control}
+                        render={({ field }) => (
+                            <Label className="flex items-center gap-2">
+                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                soy-free
+                            </Label>
+                        )}
+                    />
+                </div>
+
+                <Button type="submit">Zutat speichern</Button>
+            </form>
+        </Card>
     );
 }

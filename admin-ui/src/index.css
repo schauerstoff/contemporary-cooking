@@ -114,7 +114,20 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Stepper-Pfeile entfernen in Chrome, Safari */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Stepper-Pfeile entfernen in Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
