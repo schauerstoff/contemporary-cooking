@@ -21,7 +21,23 @@ async function main() {
     }
 
     console.log('✅ Volume units seeded!');
+
+    const seasonMonths = [
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+    ];
+
+    for (const name of seasonMonths) {
+        await prisma.seasonMonth.upsert({
+            where: { name },
+            update: {},
+            create: { name },
+        });
+    }
+
+    console.log('✅ Season months seeded!');
 }
+
 
 main()
     .catch((e) => {
