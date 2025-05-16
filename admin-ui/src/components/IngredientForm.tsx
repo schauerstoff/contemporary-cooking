@@ -1,4 +1,4 @@
-import { useForm, Controller, useWatch } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -6,8 +6,7 @@ import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Checkbox } from "./ui/checkbox";
 import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+
 import {
     Select,
     SelectTrigger,
@@ -168,18 +167,6 @@ export default function IngredientForm() {
                         <p className="text-sm text-red-500">required field</p>
                     )}
                 </div>
-                {/* 
-                <div>
-                    <Label>unit</Label>
-                    <RadioGroup defaultValue="g" className="flex gap-4">
-                        <Label className="flex items-center gap-2">
-                            <RadioGroupItem value="g" {...register("productUnit")} /> grams (g)
-                        </Label>
-                        <Label className="flex items-center gap-2">
-                            <RadioGroupItem value="ml" {...register("productUnit")} /> milliliter (ml)
-                        </Label>
-                    </RadioGroup>
-                </div> */}
 
                 <Controller
                     name="productUnit"
