@@ -1,15 +1,11 @@
 import { useForm } from "react-hook-form";
-
-type IngredientType = "BASIC" | "STAPLE" | "FRESH";
-type Season =
-    | "JAN" | "FEB" | "MAR" | "APR" | "MAY" | "JUN"
-    | "JUL" | "AUG" | "SEP" | "OCT" | "NOV" | "DEC";
+import { useEffect, useState } from "react";
 
 type IngredientFormData = {
     name: string;
     density: number;
-    season: Season[];
-    type: IngredientType;
+    season: number[];
+    type: string;
     productAmount: number;
     productPrice: number;
     pricePer100g: number;
@@ -33,6 +29,19 @@ export default function IngredientForm() {
         defaultValues: { season: [], productUnit: "g", }
     });
 
+    const [ingredientTypes, setIngredientTypes] = useState<string[]>([]);
+    const [seasonMonths, setSeasonMonths] = useState<{ id: number; name: string }[]>([]);
+
+    useEffect(() => {
+        fetch("http://localhost:3000/api/enums/ingredient-type")
+            .then(res => res.json())
+            .then(setIngredientTypes);
+
+        fetch("http://localhost:3000/api/season-months")
+            .then(res => res.json())
+            .then(setSeasonMonths);
+    }, []);
+
     const selectedType = watch("type")
     const productUnit = watch("productUnit");
     const kcalPer100Unit = watch("kcalPer100Unit");
@@ -45,6 +54,7 @@ export default function IngredientForm() {
     }
 
     const onSubmit = async (data: IngredientFormData) => {
+        console.log(typeof kcalPer100Unit);
         // conversions
         if (productUnit === "g") {
             data.pricePer100g = ((data.productPrice / data.productAmount) * 100);
@@ -52,6 +62,7 @@ export default function IngredientForm() {
             data.carbsPer100g = carbsPer100Unit;
             data.fatPer100g = fatPer100Unit;
             data.proteinPer100g = proteinPer100Unit;
+            console.log(typeof data.proteinPer100g);
         } else {
             data.pricePer100g = ((data.productPrice / data.productAmount * data.density) * 100);
             data.kcalPer100g = kcalPer100Unit / data.density;
@@ -64,11 +75,6 @@ export default function IngredientForm() {
         // TODO -> Backend
         alert("Zutat gespeichert!");
     };
-
-    const allSeasons: Season[] = [
-        "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-    ];
 
 
     return (
@@ -83,26 +89,23 @@ export default function IngredientForm() {
 
             <label>
                 type
-                <select {...register("type", { required: true })}>
+                <select {...register("type")}>
                     <option value="">– bitte wählen –</option>
-                    <option value="BASIC">basic</option>
-                    <option value="STAPLE">staple</option>
-                    <option value="FRESH">fresh</option>
+                    {ingredientTypes.map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                    ))}
                 </select>
+
                 {errors.type && <span style={{ color: "red" }}>Pflichtfeld</span>}
             </label>
 
             {selectedType === "FRESH" && (
                 <fieldset>
                     <legend>season</legend>
-                    {allSeasons.map(month => (
-                        <label key={month} style={{ display: "inline-block", marginRight: "1rem" }}>
-                            <input
-                                type="checkbox"
-                                value={month}
-                                {...register("season")}
-                            />
-                            {month}
+                    {seasonMonths.map((month) => (
+                        <label key={month.id}>
+                            <input type="checkbox" value={month.id} {...register("season")} />
+                            {month.name}
                         </label>
                     ))}
                 </fieldset>
@@ -110,7 +113,7 @@ export default function IngredientForm() {
 
             <label>
                 density (g/ml)
-                <input type="number" step="any" {...register("density", { required: true })} />
+                <input type="number" step="any" {...register("density", { required: true, valueAsNumber: true })} />
                 {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
             </label>
 
@@ -145,7 +148,7 @@ export default function IngredientForm() {
                 <input
                     type="number"
                     step="any"
-                    {...register("productAmount", { required: true, min: 1 })}
+                    {...register("productAmount", { required: true, min: 1, valueAsNumber: true })}
                 />
                 {errors.productAmount && <span style={{ color: "red" }}>Pflichtfeld</span>}
             </label>
@@ -155,32 +158,32 @@ export default function IngredientForm() {
                 <input
                     type="number"
                     step="any"
-                    {...register("productPrice", { required: true, min: 0.01 })}
+                    {...register("productPrice", { required: true, min: 0.01, valueAsNumber: true })}
                 />
                 {errors.productPrice && <span style={{ color: "red" }}>Pflichtfeld</span>}
             </label>
 
             <label>
                 kcal / 100{productUnit}
-                <input type="number" step="any" {...register("kcalPer100Unit", { required: true })} />
+                <input type="number" step="any" {...register("kcalPer100Unit", { required: true, valueAsNumber: true })} />
                 {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
             </label>
 
             <label>
                 carbs / 100{productUnit}
-                <input type="number" step="any" {...register("carbsPer100Unit", { required: true })} />
+                <input type="number" step="any" {...register("carbsPer100Unit", { required: true, valueAsNumber: true })} />
                 {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
             </label>
 
             <label>
                 fat / 100{productUnit}
-                <input type="number" step="any" {...register("fatPer100Unit", { required: true })} />
+                <input type="number" step="any" {...register("fatPer100Unit", { required: true, valueAsNumber: true })} />
                 {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
             </label>
 
             <label>
                 protein / 100{productUnit}
-                <input type="number" step="any" {...register("proteinPer100Unit", { required: true })} />
+                <input type="number" step="any" {...register("proteinPer100Unit", { required: true, valueAsNumber: true })} />
                 {errors.name && <span style={{ color: "red" }}>Pflichtfeld</span>}
             </label>
 
