@@ -97,7 +97,8 @@ model RecipeStep {
 }
 
 enum IngredientType {
-  PANTRY
+  BASIC
+  STAPLE
   FRESH
 }
 
