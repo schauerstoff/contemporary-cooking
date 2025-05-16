@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, IngredientType } from "@prisma/client";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -36,6 +36,16 @@ app.get("/recipes/:id", async (req, res) => {
   });
   if (!recipe) return res.status(404).json({ error: "Not found" });
   res.json(recipe);
+});
+
+app.get("/api/enums/ingredient-type", (req, res) => {
+  const types = Object.values(IngredientType);
+  res.json(types);
+});
+
+app.get("/api/season-months", async (req, res) => {
+  const months = await prisma.seasonMonth.findMany();
+  res.json(months);
 });
 
 app.listen(3000, () => {
