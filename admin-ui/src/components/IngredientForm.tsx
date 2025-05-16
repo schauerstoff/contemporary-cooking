@@ -105,7 +105,7 @@ export default function IngredientForm() {
 
 
     return (
-        <Card className="p-6 max-w-xl mx-auto space-y-4">
+        <Card className="p-6  space-y-4">
             <h2 className="text-xl font-semibold">Zutat hinzufügen</h2>
 
             <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
