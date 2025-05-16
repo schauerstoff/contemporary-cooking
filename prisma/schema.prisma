@@ -50,7 +50,7 @@ model Ingredient {
   id             Int                @id @default(autoincrement())
   name           String
   type           IngredientType
-  season         SeasonMonth[]
+  seasons        SeasonMonth[]
   density        Float
   pricePer100g   Float
   kcalPer100g    Float

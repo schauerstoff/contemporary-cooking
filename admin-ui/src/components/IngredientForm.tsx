@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 type IngredientFormData = {
     name: string;
     density: number;
-    season: number[];
+    seasons: number[];
     type: string;
     productAmount: number;
     productPrice: number;
@@ -26,7 +26,7 @@ export default function IngredientForm() {
         setValue,
         formState: { errors },
     } = useForm<IngredientFormData & { productUnit: "g" | "ml" } & { kcalPer100Unit: number } & { carbsPer100Unit: number } & { fatPer100Unit: number } & { proteinPer100Unit: number }>({
-        defaultValues: { season: [], productUnit: "g", }
+        defaultValues: { seasons: [], productUnit: "g", }
     });
 
     const [ingredientTypes, setIngredientTypes] = useState<string[]>([]);
@@ -50,7 +50,7 @@ export default function IngredientForm() {
     const proteinPer100Unit = watch("proteinPer100Unit");
 
     if (selectedType !== "FRESH") {
-        setValue("season", []);
+        setValue("seasons", []);
     }
 
     const onSubmit = async (data: IngredientFormData) => {
@@ -104,7 +104,7 @@ export default function IngredientForm() {
                     <legend>season</legend>
                     {seasonMonths.map((month) => (
                         <label key={month.id}>
-                            <input type="checkbox" value={month.id} {...register("season")} />
+                            <input type="checkbox" value={month.id} {...register("seasons")} />
                             {month.name}
                         </label>
                     ))}
