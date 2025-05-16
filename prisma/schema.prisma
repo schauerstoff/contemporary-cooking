@@ -49,14 +49,14 @@ model RecipeIngredient {
 model Ingredient {
   id             Int                @id @default(autoincrement())
   name           String
-  density        Float?
-  season         SeasonMonth[]
   type           IngredientType
-  pricePer100g   Float?
-  kcalPer100g    Float?
-  carbsPer100g   Float?
-  fatPer100g     Float?
-  proteinPer100g Float?
+  season         SeasonMonth[]
+  density        Float
+  pricePer100g   Float
+  kcalPer100g    Float
+  carbsPer100g   Float
+  fatPer100g     Float
+  proteinPer100g Float
   glutenFree     Boolean
   nutFree        Boolean
   soyFree        Boolean
