@@ -72,7 +72,13 @@ export default function IngredientForm() {
         }
 
         console.log("Neue Zutat:", data);
-        // TODO -> Backend
+        await fetch("http://localhost:3000/api/ingredients", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
         alert("Zutat gespeichert!");
     };
 
@@ -101,7 +107,7 @@ export default function IngredientForm() {
 
             {selectedType === "FRESH" && (
                 <fieldset>
-                    <legend>season</legend>
+                    <legend>seasons</legend>
                     {seasonMonths.map((month) => (
                         <label key={month.id}>
                             <input type="checkbox" value={month.id} {...register("seasons")} />

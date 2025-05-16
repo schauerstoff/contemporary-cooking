@@ -48,6 +48,48 @@ app.get("/api/season-months", async (req, res) => {
   res.json(months);
 });
 
+app.post("/api/ingredients", async (req, res) => {
+  const {
+    name,
+    type,
+    density,
+    pricePer100g,
+    kcalPer100g,
+    carbsPer100g,
+    fatPer100g,
+    proteinPer100g,
+    glutenFree,
+    nutFree,
+    soyFree,
+    season, // = [1, 4, 7] (IDs von SeasonMonth)
+  } = req.body;
+
+  try {
+    const ingredient = await prisma.ingredient.create({
+      data: {
+        name,
+        type,
+        density,
+        pricePer100g,
+        kcalPer100g,
+        carbsPer100g,
+        fatPer100g,
+        proteinPer100g,
+        glutenFree,
+        nutFree,
+        soyFree,
+        seasons: {
+          connect: season?.map((id: number) => ({ id })) ?? [],
+        },
+      },
+    });
+    res.status(201).json(ingredient);
+  } catch (error) {
+    console.error("Fehler beim Anlegen:", error);
+    res.status(500).json({ error: "Speichern fehlgeschlagen" });
+  }
+});
+
 app.listen(3000, () => {
   console.log("Server ready at http://localhost:3000");
 });
