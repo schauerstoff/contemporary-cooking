@@ -1,7 +1,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import IngredientForm from "./components/IngredientForm";
 import HealthIndicator from "./components/HealthIndicator";
-import DarkModeToggle from "./components/darkmodeToggle"
+import DarkModeToggle from "./components/DarkModeToggle"
 
 function App() {
   return (
