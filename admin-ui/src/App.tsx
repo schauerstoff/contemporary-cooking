@@ -1,30 +1,42 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import IngredientForm from "./components/IngredientForm";
-// import RecipeForm from "./components/RecipeForm"; // später
+// import RecipeForm from "./components/RecipeForm"; 
+import HealthIndicator from "./components/HealthIndicator";
 
 function App() {
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">༶⋆˙⊹ Admin UI ⊹˙⋆༶</h1>
+    <div>
 
-      <Tabs defaultValue="ingredient" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="ingredient">Zutat hinzufügen</TabsTrigger>
-          <TabsTrigger value="recipe">Rezept hinzufügen</TabsTrigger>
-        </TabsList>
+      <div className="sticky top-0 z-10 flex justify-between items-center px-6 py-4 shadow-sm bg-white">
+        <h1 className="text-xl tracking-wide flex items-center gap-2">
+          <span className="text-sm text-gray-800">✧･ﾟ: *✧</span>
+          <span className="font-semibold ">𝒄𝒐𝒏𝒕𝒆𝒎𝒑𝒐𝒓𝒂𝒓𝒚 𝒄𝒐𝒐𝒌𝒊𝒏𝒈 𝒂𝒅𝒎𝒊𝒏</span>
+          <span className="text-sm text-gray-800">✧ *:･ﾟ✧</span>
+        </h1>
+        <HealthIndicator />
+      </div>
 
-        <TabsContent value="ingredient">
-          <IngredientForm />
-        </TabsContent>
+      <div className="p-8 max-w-4xl mx-auto">
 
-        <TabsContent value="recipe">
-          {/* <RecipeForm /> */}
-          <div className="p-4 border rounded text-gray-500">
-            Rezeptformular coming soon.
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+
+        <Tabs defaultValue="ingredient" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="ingredient">Zutat hinzufügen</TabsTrigger>
+            <TabsTrigger value="recipe">Rezept hinzufügen</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="ingredient">
+            <IngredientForm />
+          </TabsContent>
+
+          <TabsContent value="recipe">
+            {/* <RecipeForm /> */}
+            <div className="p-4 border rounded text-gray-500">
+              Rezeptformular coming soon.
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div></div>
   );
 }
 
