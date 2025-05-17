@@ -120,40 +120,42 @@ export default function IngredientForm() {
 
             <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
 
-                <div>
-                    <Label htmlFor="name">name</Label>
-                    <Input id="name" {...register("name", { required: "required" })} />
-                    {errors.density?.message && (
-                        <p className="text-sm text-pink-500">{errors.density.message}</p>
-                    )}
-                </div>
+                <div className="flex gap-4">
+                    <div className="w-1/2">
+                        <Label htmlFor="name">name</Label>
+                        <Input id="name" {...register("name", { required: "required" })} />
+                        {errors.name?.message && (
+                            <p className="text-sm text-pink-500">{errors.name.message}</p>
+                        )}
+                    </div>
 
-                <div>
-                    <Label>type</Label>
-                    <Select
-                        onValueChange={(value) => {
-                            setValue("type", value, { shouldValidate: true });
-                            trigger("type");
-                        }}
-                        defaultValue={getValues("type")}
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="– bitte wählen –" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {ingredientTypes.map((type) => (
-                                <SelectItem key={type} value={type}>
-                                    {type}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <div className="w-1/2">
+                        <Label>type</Label>
+                        <Select
+                            onValueChange={(value) => {
+                                setValue("type", value, { shouldValidate: true });
+                                trigger("type");
+                            }}
+                            defaultValue={getValues("type")}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="– bitte wählen –" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {ingredientTypes.map((type) => (
+                                    <SelectItem key={type} value={type}>
+                                        {type}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
 
-                    <input type="hidden" {...register("type", { required: "required" })} />
+                        <input type="hidden" {...register("type", { required: "required" })} />
 
-                    {errors.type && (
-                        <p className="text-sm text-pink-500">{errors.type.message}</p>
-                    )}
+                        {errors.type && (
+                            <p className="text-sm text-pink-500">{errors.type.message}</p>
+                        )}
+                    </div>
                 </div>
 
                 {selectedType === "FRESH" && (
