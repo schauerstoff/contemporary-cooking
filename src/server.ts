@@ -90,6 +90,10 @@ app.post("/api/ingredients", async (req, res) => {
   }
 });
 
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 app.listen(3000, () => {
   console.log("Server ready at http://localhost:3000");
 });
