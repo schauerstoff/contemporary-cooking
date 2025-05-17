@@ -41,6 +41,7 @@ export default function IngredientForm() {
         getValues,
         trigger,
         control,
+        reset,
         formState: { errors },
     } = useForm<IngredientFormData & { productUnit: "g" | "ml" } & { kcalPer100Unit: number } & { carbsPer100Unit: number } & { fatPer100Unit: number } & { proteinPer100Unit: number }>({
         defaultValues: {
@@ -54,6 +55,18 @@ export default function IngredientForm() {
 
     const [ingredientTypes, setIngredientTypes] = useState<string[]>([]);
     const [seasonMonths, setSeasonMonths] = useState<{ id: number; name: string }[]>([]);
+
+    const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    useEffect(() => {
+        if (submitSuccess) {
+            const timer = setTimeout(() => {
+                setSubmitSuccess(null);
+            }, 2000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [submitSuccess]);
 
     useEffect(() => {
         fetch("http://localhost:3000/api/enums/ingredient-type")
@@ -89,6 +102,9 @@ export default function IngredientForm() {
     }
 
     const onSubmit = async (data: IngredientFormData) => {
+        setSubmitError(null);
+        setSubmitSuccess(null);
+
         if (!data.productAmount || data.productAmount <= 0) {
             alert("Bitte eine gültige Packungsgröße (> 0) eingeben.");
             return;
@@ -114,22 +130,40 @@ export default function IngredientForm() {
             data.proteinPer100g = proteinPer100Unit / data.density;
         }
 
-        console.log("Neue Zutat:", data);
-        await fetch("http://localhost:3000/api/ingredients", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
-        alert("Zutat gespeichert!");
+        try {
+            const response = await fetch("http://localhost:3000/api/ingredients", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error?.message || "Unbekannter Fehler beim Speichern.");
+            }
+            setSubmitSuccess("✅ Zutat erfolgreich gespeichert!");
+            reset({
+                seasons: [],
+                productUnit: "g",
+                glutenFree: false,
+                nutFree: false,
+                soyFree: false,
+                type: "",
+            });
+
+        } catch (err: any) {
+            console.error("❌ Fehler beim Speichern:", err);
+            setSubmitError(err.message);
+        }
     };
 
 
     return (
+        // TODO Refactor: Label + Input Component to new component
         <Card className="p-6  space-y-4">
-            <h2 className="text-xl font-semibold">Zutat hinzufügen</h2>
-
+            <h2 className="text-xl font-semibold">add ingredient</h2>
             <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
 
                 <div className="flex gap-4">
@@ -228,49 +262,6 @@ export default function IngredientForm() {
                 </div>
 
                 <hr />
-                {/* 
-                <div className="grid grid-cols-2 gap-6">
-                    <div>
-                        <Label className="mb-1">product price in €</Label>
-                        <Input
-                            type="number"
-                            step="any"
-                            {...register("productPrice", {
-                                required: "required",
-                                min: {
-                                    value: 0,
-                                    message: "must be >= 0",
-                                },
-                                valueAsNumber: true,
-                                validate: (value) =>
-                                    !isNaN(value)
-                                        ? true
-                                        : "Der Wert muss eine gültige Zahl sein",
-                            })}
-                        />
-                        {errors.productPrice?.message && (
-                            <p className="text-sm text-pink-500">{errors.productPrice.message}</p>
-                        )}
-                    </div>
-                    <div>
-                        <Label className="mb-1">product size in {productUnit}</Label>
-                        <Input
-                            type="number"
-                            step="any"
-                            {...register("productAmount", {
-                                required: "required",
-                                min: {
-                                    value: 1,
-                                    message: "must be > 0",
-                                },
-                                valueAsNumber: true,
-                            })}
-                        />
-                        {errors.productAmount?.message && (
-                            <p className="text-sm text-pink-500">{errors.productAmount.message}</p>
-                        )}
-                    </div>
-                </div> */}
 
                 <div className="grid grid-cols-3 gap-6 items-end">
                     <div>
@@ -419,6 +410,17 @@ export default function IngredientForm() {
                 </div>
 
                 <Button type="submit">Zutat speichern</Button>
+                {submitSuccess && (
+                    <div className="mt-4 p-4 bg-green-100 text-green-800 border border-green-300 rounded">
+                        {submitSuccess}
+                    </div>
+                )}
+
+                {submitError && (
+                    <div className="p-4 bg-pink-100 text-pink-700 border border-pink-300 rounded">
+                        <strong>Fehler:</strong> {submitError}
+                    </div>
+                )}
             </form>
         </Card>
     );

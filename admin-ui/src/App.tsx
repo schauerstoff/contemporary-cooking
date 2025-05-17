@@ -1,6 +1,5 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import IngredientForm from "./components/IngredientForm";
-// import RecipeForm from "./components/RecipeForm"; 
 import HealthIndicator from "./components/HealthIndicator";
 import DarkModeToggle from "./components/darkmodeToggle"
 
@@ -26,8 +25,8 @@ function App() {
 
         <Tabs defaultValue="ingredient" className="w-full">
           <TabsList className="mb-4">
-            <TabsTrigger value="ingredient">Zutat hinzufügen</TabsTrigger>
-            <TabsTrigger value="recipe">Rezept hinzufügen</TabsTrigger>
+            <TabsTrigger value="ingredient">add ingredient</TabsTrigger>
+            <TabsTrigger value="recipe">add recipe </TabsTrigger>
           </TabsList>
 
           <TabsContent value="ingredient">
@@ -36,7 +35,7 @@ function App() {
 
           <TabsContent value="recipe">
             <div className="p-4 border rounded text-gray-500">
-              Rezeptformular coming soon.
+              coming soon.
             </div>
           </TabsContent>
         </Tabs>
