@@ -5,7 +5,7 @@ import IngredientForm from "./components/IngredientForm";
 function App() {
   return (
     <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Admin UI</h1>
+      <h1 className="text-2xl font-bold mb-6">༶⋆˙⊹ Admin UI ⊹˙⋆༶</h1>
 
       <Tabs defaultValue="ingredient" className="w-full">
         <TabsList className="mb-4">

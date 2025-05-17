@@ -61,7 +61,7 @@ app.post("/api/ingredients", async (req, res) => {
     glutenFree,
     nutFree,
     soyFree,
-    season, // = [1, 4, 7] (IDs von SeasonMonth)
+    season,
   } = req.body;
 
   try {
