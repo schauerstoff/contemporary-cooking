@@ -67,10 +67,22 @@ export default function IngredientForm() {
 
     const selectedType = watch("type")
     const productUnit = watch("productUnit");
+    const density = watch("density")
+    const productPrice = watch("productPrice");
+    const productAmount = watch("productAmount");
     const kcalPer100Unit = watch("kcalPer100Unit");
     const carbsPer100Unit = watch("carbsPer100Unit");
     const fatPer100Unit = watch("fatPer100Unit");
     const proteinPer100Unit = watch("proteinPer100Unit");
+
+    const calculatedPricePer100g =
+        productPrice && productAmount
+            ? productUnit === "g"
+                ? (productPrice / productAmount) * 100
+                : density
+                    ? (productPrice / (productAmount * density)) * 100
+                    : undefined
+            : undefined;
 
     if (selectedType !== "FRESH") {
         setValue("seasons", []);
@@ -122,7 +134,7 @@ export default function IngredientForm() {
 
                 <div className="flex gap-4">
                     <div className="w-1/2">
-                        <Label htmlFor="name">name</Label>
+                        <Label className="mb-1" htmlFor="name">name</Label>
                         <Input id="name" {...register("name", { required: "required" })} />
                         {errors.name?.message && (
                             <p className="text-sm text-pink-500">{errors.name.message}</p>
@@ -130,7 +142,7 @@ export default function IngredientForm() {
                     </div>
 
                     <div className="w-1/2">
-                        <Label>type</Label>
+                        <Label className="mb-1">type</Label>
                         <Select
                             onValueChange={(value) => {
                                 setValue("type", value, { shouldValidate: true });
@@ -177,7 +189,7 @@ export default function IngredientForm() {
                 <div className="grid grid-cols-2 gap-6 items-start">
 
                     <div>
-                        <Label>unit</Label>
+                        <Label className="mb-1">unit</Label>
                         <Controller
                             name="productUnit"
                             control={control}
@@ -202,7 +214,7 @@ export default function IngredientForm() {
                     </div>
 
                     <div>
-                        <Label htmlFor="density">density (g/ml)</Label>
+                        <Label className="mb-1" htmlFor="density">density (g/ml)</Label>
                         <Input
                             id="density"
                             type="number"
@@ -216,10 +228,10 @@ export default function IngredientForm() {
                 </div>
 
                 <hr />
-
+                {/* 
                 <div className="grid grid-cols-2 gap-6">
                     <div>
-                        <Label>product price in €</Label>
+                        <Label className="mb-1">product price in €</Label>
                         <Input
                             type="number"
                             step="any"
@@ -241,7 +253,7 @@ export default function IngredientForm() {
                         )}
                     </div>
                     <div>
-                        <Label>product size in {productUnit}</Label>
+                        <Label className="mb-1">product size in {productUnit}</Label>
                         <Input
                             type="number"
                             step="any"
@@ -258,14 +270,56 @@ export default function IngredientForm() {
                             <p className="text-sm text-pink-500">{errors.productAmount.message}</p>
                         )}
                     </div>
-                </div>
+                </div> */}
 
+                <div className="grid grid-cols-3 gap-6 items-end">
+                    <div>
+                        <Label className="mb-1">product price in €</Label>
+                        <Input
+                            type="number"
+                            step="any"
+                            {...register("productPrice", {
+                                required: "required",
+                                min: { value: 0, message: "must be ≥ 0" },
+                                valueAsNumber: true,
+                                validate: (value) =>
+                                    !isNaN(value) ? true : "Der Wert muss eine gültige Zahl sein",
+                            })}
+                        />
+                        {errors.productPrice?.message && (
+                            <p className="text-sm text-pink-500">{errors.productPrice.message}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <Label className="mb-1">product size in {productUnit}</Label>
+                        <Input
+                            type="number"
+                            step="any"
+                            {...register("productAmount", {
+                                required: "required",
+                                min: { value: 1, message: "must be > 0" },
+                                valueAsNumber: true,
+                            })}
+                        />
+                        {errors.productAmount?.message && (
+                            <p className="text-sm text-pink-500">{errors.productAmount.message}</p>
+                        )}
+                    </div>
+
+                    <div>
+                        <Label className="mb-1">price per 100g</Label>
+                        <p className="text-gray-700 dark:text-gray-300 font-medium">
+                            {calculatedPricePer100g?.toFixed(2) ?? "-"} €
+                        </p>
+                    </div>
+                </div>
                 <hr />
 
                 <div className="grid grid-cols-2 gap-6">
                     <div className="flex flex-col gap-4">
                         <div>
-                            <Label>kcal / 100{productUnit}</Label>
+                            <Label className="mb-1">kcal / 100{productUnit}</Label>
                             <Input
                                 type="number"
                                 step="any"
@@ -281,7 +335,7 @@ export default function IngredientForm() {
                             )}
                         </div>
                         <div>
-                            <Label>carbs / 100{productUnit}</Label>
+                            <Label className="mb-1">carbs / 100{productUnit}</Label>
                             <Input
                                 type="number"
                                 step="any"
@@ -297,7 +351,7 @@ export default function IngredientForm() {
                             )}
                         </div>
                         <div>
-                            <Label>fat / 100{productUnit}</Label>
+                            <Label className="mb-1">fat / 100{productUnit}</Label>
                             <Input
                                 type="number"
                                 step="any"
@@ -313,7 +367,7 @@ export default function IngredientForm() {
                             )}
                         </div>
                         <div>
-                            <Label>protein / 100{productUnit}</Label>
+                            <Label className="mb-1">protein / 100{productUnit}</Label>
                             <Input
                                 type="number"
                                 step="any"
