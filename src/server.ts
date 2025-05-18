@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import { PrismaClient, IngredientType } from "@prisma/client";
 import dotenv from "dotenv";
+import multer from "multer";
+import path from "path";
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -9,6 +11,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/images", express.static("images"));
 
 app.get("/recipes", async (req, res) => {
   const recipes = await prisma.recipe.findMany({
@@ -92,6 +96,24 @@ app.post("/api/ingredients", async (req, res) => {
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
+});
+
+
+
+const storage = multer.diskStorage({
+  destination: "images/",
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + path.extname(file.originalname);
+    cb(null, "recipe-" + uniqueSuffix);
+  },
+});
+
+const upload = multer({ storage });
+
+app.post("/api/upload", upload.single("image"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded." });
+  const filePath = `/images/${req.file.filename}`;
+  res.json({ url: filePath });
 });
 
 app.listen(3000, () => {
