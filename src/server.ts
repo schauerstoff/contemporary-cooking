@@ -116,6 +116,21 @@ app.post("/api/upload", upload.single("image"), (req, res) => {
   res.json({ url: filePath });
 });
 
+app.get("/api/categories", async (req, res) => {
+  const categories = await prisma.category.findMany();
+  res.json(categories);
+});
+
+app.get("/api/tags", async (req, res) => {
+  const tags = await prisma.tag.findMany();
+  res.json(tags);
+});
+
+app.get("/api/appliances", async (req, res) => {
+  const appliances = await prisma.kitchenAppliance.findMany();
+  res.json(appliances);
+});
+
 app.listen(3000, () => {
   console.log("Server ready at http://localhost:3000");
 });
