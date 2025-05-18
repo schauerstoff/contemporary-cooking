@@ -5,6 +5,7 @@ import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
+import { CollapsibleFieldset } from "./forms/CollapsibleFieldset"
 
 interface RecipeFormData {
     title: string;
@@ -13,6 +14,9 @@ interface RecipeFormData {
     servings: number;
     prepTime: number;
     waitTime: number;
+    categoryIds: number[];
+    tagIds: number[];
+    applianceIds: number[];
 }
 
 export default function RecipeForm() {
@@ -31,12 +35,23 @@ export default function RecipeForm() {
     const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
     const [submitError, setSubmitError] = useState<string | null>(null);
 
+
     useEffect(() => {
         if (submitSuccess) {
             const timer = setTimeout(() => setSubmitSuccess(null), 3000);
             return () => clearTimeout(timer);
         }
     }, [submitSuccess]);
+
+    const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
+    const [tags, setTags] = useState<{ id: number; name: string }[]>([]);
+    const [appliances, setAppliances] = useState<{ id: number; name: string }[]>([]);
+
+    useEffect(() => {
+        fetch("http://localhost:3000/api/categories").then(res => res.json()).then(setCategories);
+        fetch("http://localhost:3000/api/tags").then(res => res.json()).then(setTags);
+        fetch("http://localhost:3000/api/appliances").then(res => res.json()).then(setAppliances);
+    }, []);
 
     const onSubmit = async (data: RecipeFormData) => {
         setSubmitError(null);
@@ -67,6 +82,7 @@ export default function RecipeForm() {
         <Card className="p-6 space-y-4">
             <h2 className="text-xl font-semibold">add recipe</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+
                 <div>
                     <Label className="mb-1" htmlFor="title">title</Label>
                     <Input id="title" {...register("title", { required: "required" })} />
@@ -83,24 +99,62 @@ export default function RecipeForm() {
                     <Input id="image" {...register("image")} />
                 </div>
 
-                <div className="grid grid-cols-3 gap-6">
-                    <div>
-                        <Label className="mb-1">servings</Label>
-                        <Input type="number" step="1" {...register("servings", { required: "required", valueAsNumber: true })} />
-                        {errors.servings && <p className="text-sm text-pink-500">{errors.servings.message}</p>}
+
+                <div className="flex gap-4">
+                    <CollapsibleFieldset title="categories">
+                        <div className="flex flex-col gap-2">
+                            {categories.map((cat) => (
+                                <Label key={cat.id} className="flex items-center gap-2">
+                                    <Checkbox value={cat.id} {...register("categoryIds")} />
+                                    {cat.name}
+                                </Label>
+                            ))}
+                        </div>
+                    </CollapsibleFieldset>
+
+                    <CollapsibleFieldset title="tags">
+                        <div className="flex flex-col gap-2">
+                            {tags.map((tag) => (
+                                <Label key={tag.id} className="flex items-center gap-2">
+                                    <Checkbox value={tag.id} {...register("tagIds")} />
+                                    {tag.name}
+                                </Label>
+                            ))}
+                        </div>
+                    </CollapsibleFieldset>
+
+                    <CollapsibleFieldset title="appliances">
+                        <div className="flex flex-col gap-2">
+                            {appliances.map((app) => (
+                                <Label key={app.id} className="flex items-center gap-2">
+                                    <Checkbox value={app.id} {...register("applianceIds")} />
+                                    {app.name}
+                                </Label>
+                            ))}
+                        </div>
+                    </CollapsibleFieldset>
+
+                    <div className="flex flex-col gap-2">
+                        <div>
+                            <Label className="mb-1">servings</Label>
+                            <Input type="number" step="1" {...register("servings", { required: "required", valueAsNumber: true })} />
+                            {errors.servings && <p className="text-sm text-pink-500">{errors.servings.message}</p>}
+                        </div>
+
+                        <div>
+                            <Label className="mb-1">prepTime (min)</Label>
+                            <Input type="number" step="1" {...register("prepTime", { required: "required", valueAsNumber: true })} />
+                            {errors.prepTime && <p className="text-sm text-pink-500">{errors.prepTime.message}</p>}
+                        </div>
+
+                        <div>
+                            <Label className="mb-1">waitTime (min)</Label>
+                            <Input type="number" step="1" {...register("waitTime", { valueAsNumber: true })} />
+                        </div>
                     </div>
 
-                    <div>
-                        <Label className="mb-1">prepTime (min)</Label>
-                        <Input type="number" step="1" {...register("prepTime", { required: "required", valueAsNumber: true })} />
-                        {errors.prepTime && <p className="text-sm text-pink-500">{errors.prepTime.message}</p>}
-                    </div>
-
-                    <div>
-                        <Label className="mb-1">waitTime (min)</Label>
-                        <Input type="number" step="1" {...register("waitTime", { valueAsNumber: true })} />
-                    </div>
                 </div>
+
 
 
                 <Button type="submit">Rezept speichern</Button>
