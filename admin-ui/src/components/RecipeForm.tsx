@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -23,6 +24,10 @@ export default function RecipeForm() {
     const {
         register,
         handleSubmit,
+        watch,
+        setValue,
+        getValues,
+        trigger,
         control,
         reset,
         formState: { errors },
@@ -52,6 +57,38 @@ export default function RecipeForm() {
         fetch("http://localhost:3000/api/tags").then(res => res.json()).then(setTags);
         fetch("http://localhost:3000/api/appliances").then(res => res.json()).then(setAppliances);
     }, []);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState(false);
+    const imageUrl = watch("image");
+
+    const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setSelectedFileName(file.name);
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+            const response = await fetch("http://localhost:3000/api/upload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error("Fehler beim Upload.");
+            }
+
+            const data = await response.json();
+            setValue("image", data.url, { shouldValidate: true }); // speichert Pfad in Form
+        } catch (error) {
+            console.error("Upload-Fehler:", error);
+            alert("Bild konnte nicht hochgeladen werden.");
+        }
+    };
 
     const onSubmit = async (data: RecipeFormData) => {
         setSubmitError(null);
@@ -83,20 +120,54 @@ export default function RecipeForm() {
             <h2 className="text-xl font-semibold">add recipe</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
 
-                <div>
-                    <Label className="mb-1" htmlFor="title">title</Label>
-                    <Input id="title" {...register("title", { required: "required" })} />
-                    {errors.title && <p className="text-sm text-pink-500">{errors.title.message}</p>}
-                </div>
+                <div className="grid grid-cols-2 gap-6">
+                    <div className="flex-1 space-y-4">
+                        <div>
+                            <Label className="mb-1" htmlFor="title">title</Label>
+                            <Input id="title" {...register("title", { required: "required" })} />
+                            {errors.title && <p className="text-sm text-pink-500">{errors.title.message}</p>}
+                        </div>
 
-                <div>
-                    <Label className="mb-1" htmlFor="description">description</Label>
-                    <Input id="description" {...register("description")} />
-                </div>
+                        <div>
+                            <Label className="mb-1" htmlFor="description">description</Label>
+                            <Input id="description" {...register("description")} />
+                        </div>
 
-                <div>
-                    <Label className="mb-1" htmlFor="image">image URL</Label>
-                    <Input id="image" {...register("image")} />
+                        <div>
+                            <Label className="mb-1 block">upload image</Label>
+
+                            <label
+                                htmlFor="file-upload"
+                                className="inline-block cursor-pointer px-4 py-2 bg-black text-white text-sm rounded hover:bg-blue-700 transition"
+                            >
+                                📁 Datei auswählen
+                            </label>
+
+                            <input
+                                id="file-upload"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="hidden"
+                            />
+
+                            {selectedFileName && (
+                                <p className="mt-2 text-sm text-gray-600 italic">{selectedFileName}</p>
+                            )}
+                        </div>
+
+                    </div>
+                    {imageUrl && (
+                        <div>
+                            <Label className="mb-1 block">preview</Label>
+                            <img
+                                src={`http://localhost:3000${imageUrl}`}
+                                alt="Preview"
+                                className="max-h-70 rounded border shadow-sm object-cover"
+                            />
+                        </div>
+                    )}
+
                 </div>
 
 
@@ -171,6 +242,6 @@ export default function RecipeForm() {
                     </div>
                 )}
             </form>
-        </Card>
+        </Card >
     );
 }
