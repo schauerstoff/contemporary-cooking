@@ -1,5 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import IngredientForm from "./components/IngredientForm";
+import RecipeForm from "./components/RecipeForm";
 import HealthIndicator from "./components/HealthIndicator";
 import DarkModeToggle from "./components/DarkModeToggle"
 
@@ -34,9 +35,10 @@ function App() {
           </TabsContent>
 
           <TabsContent value="recipe">
-            <div className="p-4 border rounded text-gray-500">
+            {/* <div className="p-4 border rounded text-gray-500">
               coming soon.
-            </div>
+            </div> */}
+            <RecipeForm />
           </TabsContent>
         </Tabs>
       </div></div>
