@@ -46,10 +46,7 @@ export default function IngredientForm() {
     } = useForm<IngredientFormData & { productUnit: "g" | "ml" } & { kcalPer100Unit: number } & { carbsPer100Unit: number } & { fatPer100Unit: number } & { proteinPer100Unit: number }>({
         defaultValues: {
             seasons: [],
-            productUnit: "g",
-            glutenFree: false,
-            nutFree: false,
-            soyFree: false,
+            productUnit: "g"
         }
     });
 
@@ -186,7 +183,7 @@ export default function IngredientForm() {
                                 render={({ field }) => (
                                     <RadioGroup
                                         className="flex gap-4"
-                                        value={field.value}
+                                        value={field.value ?? ""}
                                         onValueChange={(value) => {
                                             field.onChange(value);
                                             trigger("type");
@@ -385,33 +382,92 @@ export default function IngredientForm() {
                         <Controller
                             name="glutenFree"
                             control={control}
+                            rules={{
+                                validate: (v) =>
+                                    v === true || v === false ? true : "required",
+                            }}
                             render={({ field }) => (
-                                <Label className="flex items-center gap-2">
-                                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                    gluten-free
-                                </Label>
+                                <div>
+                                    <Label className="block mb-1">gluten free?</Label>
+                                    <RadioGroup
+                                        value={field.value?.toString() ?? ""}
+                                        onValueChange={(value) => field.onChange(value === "true")}
+                                        className="flex gap-4"
+                                    >
+                                        <Label className="flex items-center gap-2">
+                                            <RadioGroupItem value="true" /> Ja
+                                        </Label>
+                                        <Label className="flex items-center gap-2">
+                                            <RadioGroupItem value="false" /> Nein
+                                        </Label>
+                                    </RadioGroup>
+                                    {errors.glutenFree && (
+                                        <p className="text-sm text-pink-500">{errors.glutenFree.message}</p>
+                                    )}
+                                </div>
                             )}
                         />
+
                         <Controller
                             name="nutFree"
                             control={control}
+                            rules={{
+                                validate: (v) =>
+                                    v === true || v === false ? true : "required",
+                            }}
                             render={({ field }) => (
-                                <Label className="flex items-center gap-2">
-                                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                    nut-free
-                                </Label>
+                                <div>
+                                    <Label className="block mb-3">nutfree?</Label>
+                                    <RadioGroup
+                                        value={field.value?.toString() ?? ""}
+                                        onValueChange={(value) => field.onChange(value === "true")}
+                                        className="flex gap-4"
+                                    >
+                                        <Label className="flex items-center gap-2">
+                                            <RadioGroupItem value="true" /> Ja
+                                        </Label>
+                                        <Label className="flex items-center gap-2">
+                                            <RadioGroupItem value="false" /> Nein
+                                        </Label>
+                                    </RadioGroup>
+                                    {errors.nutFree && (
+                                        <p className="text-sm text-pink-500">{errors.nutFree.message}</p>
+                                    )}
+                                </div>
                             )}
                         />
+
                         <Controller
                             name="soyFree"
                             control={control}
+                            rules={{
+                                validate: (v) =>
+                                    v === true || v === false ? true : "required",
+                            }}
                             render={({ field }) => (
-                                <Label className="flex items-center gap-2">
-                                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                    soy-free
-                                </Label>
+                                <div>
+                                    <Label className="block mb-1">soy free?</Label>
+                                    <RadioGroup
+                                        value={field.value?.toString() ?? ""}
+                                        onValueChange={(value) => field.onChange(value === "true")}
+                                        className="flex gap-4"
+                                    >
+                                        <Label className="flex items-center gap-2">
+                                            <RadioGroupItem value="true" /> Ja
+                                        </Label>
+                                        <Label className="flex items-center gap-2">
+                                            <RadioGroupItem value="false" /> Nein
+                                        </Label>
+                                    </RadioGroup>
+                                    {errors.soyFree && (
+                                        <p className="text-sm text-pink-500">{errors.soyFree.message}</p>
+                                    )}
+                                </div>
                             )}
                         />
+
+
+
                     </div>
                 </div>
 
