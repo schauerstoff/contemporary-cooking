@@ -58,10 +58,10 @@ async function main() {
         { name: "clean", description: "damit du deine 30er noch erlebst" },
         { name: "boring", description: "für den highperformer dopamin detox day" },
         { name: "high protein", description: "hühnchen mit reis... du weißt schon" },
-        { name: "gf-approved", description: "meine freundin fand es 'nicht schlecht'" },
         { name: "süßkram", description: "du brauchst das nicht aber du willst es" },
         { name: "katerfrühstück", description: "fett, salz und mitleid" },
         { name: "food porn", description: "isst du mit den augen? schau hier" },
+        { name: "gf-approved", description: "meine freundin fand es 'nicht schlecht'" },
         { name: "vertrau mir bruder", description: "ich kann für nichts garantieren" },
     ];
 
