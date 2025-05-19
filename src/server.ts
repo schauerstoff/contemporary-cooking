@@ -42,6 +42,58 @@ app.get("/recipes/:id", async (req, res) => {
   res.json(recipe);
 });
 
+app.post("/api/recipes", async (req, res) => {
+  const {
+    title,
+    description,
+    image,
+    servings,
+    prepTime,
+    waitTime,
+    glutenFree,
+    nutFree,
+    soyFree,
+    categoryIds,
+    tagIds,
+    applianceIds,
+  } = req.body;
+
+  try {
+    const recipe = await prisma.recipe.create({
+      data: {
+        title,
+        description,
+        image,
+        servings,
+        prepTime,
+        waitTime: waitTime ?? 0,
+        glutenFree: glutenFree ?? false,
+        nutFree: nutFree ?? false,
+        soyFree: soyFree ?? false,
+        categories: {
+          connect: categoryIds?.map((id: number) => ({ id })) ?? [],
+        },
+        tags: {
+          connect: tagIds?.map((id: number) => ({ id })) ?? [],
+        },
+        appliances: {
+          connect: applianceIds?.map((id: number) => ({ id })) ?? [],
+        },
+        pricePerPortion: 0,
+        kcalPerPortion: 0,
+        carbsPerPortion: 0,
+        fatPerPortion: 0,
+        proteinPerPortion: 0,
+      },
+    });
+
+    res.status(201).json(recipe);
+  } catch (error) {
+    console.error("❌ Fehler beim Anlegen des Rezepts:", error);
+    res.status(500).json({ error: "Fehler beim Anlegen des Rezepts" });
+  }
+});
+
 app.get("/api/enums/ingredient-type", (req, res) => {
   const types = Object.values(IngredientType);
   res.json(types);
