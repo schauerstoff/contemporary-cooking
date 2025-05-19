@@ -91,6 +91,8 @@ export default function RecipeForm() {
     };
 
     const onSubmit = async (data: RecipeFormData) => {
+        console.log("onSubmit")
+        console.log("📤 Sending data:", data);
         setSubmitError(null);
         setSubmitSuccess(null);
         try {
@@ -172,38 +174,90 @@ export default function RecipeForm() {
 
 
                 <div className="flex gap-4">
-                    <CollapsibleFieldset title="categories">
-                        <div className="flex flex-col gap-2">
-                            {categories.map((cat) => (
-                                <Label key={cat.id} className="flex items-center gap-2">
-                                    <Checkbox value={cat.id} {...register("categoryIds")} />
-                                    {cat.name}
-                                </Label>
-                            ))}
-                        </div>
-                    </CollapsibleFieldset>
 
-                    <CollapsibleFieldset title="tags">
-                        <div className="flex flex-col gap-2">
-                            {tags.map((tag) => (
-                                <Label key={tag.id} className="flex items-center gap-2">
-                                    <Checkbox value={tag.id} {...register("tagIds")} />
-                                    {tag.name}
-                                </Label>
-                            ))}
-                        </div>
-                    </CollapsibleFieldset>
+                    <Controller
+                        name="categoryIds"
+                        control={control}
+                        defaultValue={[]}
+                        render={({ field }) => (
+                            <CollapsibleFieldset title="categories">
+                                <div className="flex flex-col gap-2">
+                                    {categories.map((cat) => (
+                                        <Label key={cat.id} className="flex items-center gap-2">
+                                            <Checkbox
+                                                checked={field.value?.includes(cat.id)}
+                                                onCheckedChange={(checked) => {
+                                                    const value = field.value || [];
+                                                    if (checked) {
+                                                        field.onChange([...value, cat.id]);
+                                                    } else {
+                                                        field.onChange(value.filter((id: number) => id !== cat.id));
+                                                    }
+                                                }}
+                                            />
+                                            {cat.name}
+                                        </Label>
+                                    ))}
+                                </div>
+                            </CollapsibleFieldset>
+                        )}
+                    />
 
-                    <CollapsibleFieldset title="appliances">
-                        <div className="flex flex-col gap-2">
-                            {appliances.map((app) => (
-                                <Label key={app.id} className="flex items-center gap-2">
-                                    <Checkbox value={app.id} {...register("applianceIds")} />
-                                    {app.name}
-                                </Label>
-                            ))}
-                        </div>
-                    </CollapsibleFieldset>
+                    <Controller
+                        name="tagIds"
+                        control={control}
+                        defaultValue={[]}
+                        render={({ field }) => (
+                            <CollapsibleFieldset title="tags">
+                                <div className="flex flex-col gap-2">
+                                    {tags.map((tag) => (
+                                        <Label key={tag.id} className="flex items-center gap-2">
+                                            <Checkbox
+                                                checked={field.value?.includes(tag.id)}
+                                                onCheckedChange={(checked) => {
+                                                    const value = field.value || [];
+                                                    if (checked) {
+                                                        field.onChange([...value, tag.id]);
+                                                    } else {
+                                                        field.onChange(value.filter((id: number) => id !== tag.id));
+                                                    }
+                                                }}
+                                            />
+                                            {tag.name}
+                                        </Label>
+                                    ))}
+                                </div>
+                            </CollapsibleFieldset>
+                        )}
+                    />
+
+                    <Controller
+                        name="applianceIds"
+                        control={control}
+                        defaultValue={[]}
+                        render={({ field }) => (
+                            <CollapsibleFieldset title="appliances">
+                                <div className="flex flex-col gap-2">
+                                    {appliances.map((app) => (
+                                        <Label key={app.id} className="flex items-center gap-2">
+                                            <Checkbox
+                                                checked={field.value?.includes(app.id)}
+                                                onCheckedChange={(checked) => {
+                                                    const value = field.value || [];
+                                                    if (checked) {
+                                                        field.onChange([...value, app.id]);
+                                                    } else {
+                                                        field.onChange(value.filter((id: number) => id !== app.id));
+                                                    }
+                                                }}
+                                            />
+                                            {app.name}
+                                        </Label>
+                                    ))}
+                                </div>
+                            </CollapsibleFieldset>
+                        )}
+                    />
 
                     <div className="flex flex-col gap-2">
                         <div>
