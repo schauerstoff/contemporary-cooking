@@ -176,31 +176,37 @@ export default function IngredientForm() {
                     </div>
 
                     <div className="w-1/2">
-                        <Label className="mb-1">type</Label>
-                        <Select
-                            onValueChange={(value) => {
-                                setValue("type", value, { shouldValidate: true });
-                                trigger("type");
-                            }}
-                            defaultValue={getValues("type")}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="– bitte wählen –" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {ingredientTypes.map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                        {type}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <div className="w-1/2">
+                            <Label className="mb-3 block">type</Label>
 
-                        <input type="hidden" {...register("type", { required: "required" })} />
+                            <Controller
+                                name="type"
+                                control={control}
+                                rules={{ required: "required" }}
+                                render={({ field }) => (
+                                    <RadioGroup
+                                        className="flex gap-4"
+                                        value={field.value}
+                                        onValueChange={(value) => {
+                                            field.onChange(value);
+                                            trigger("type");
+                                        }}
+                                    >
+                                        {ingredientTypes.map((type) => (
+                                            <Label key={type} className="flex items-center gap-2">
+                                                <RadioGroupItem value={type} />
+                                                {type}
+                                            </Label>
+                                        ))}
+                                    </RadioGroup>
+                                )}
+                            />
 
-                        {errors.type && (
-                            <p className="text-sm text-pink-500">{errors.type.message}</p>
-                        )}
+                            {errors.type && (
+                                <p className="text-sm text-pink-500">{errors.type.message}</p>
+                            )}
+                        </div>
+
                     </div>
                 </div>
 
@@ -223,7 +229,7 @@ export default function IngredientForm() {
                 <div className="grid grid-cols-2 gap-6 items-start">
 
                     <div>
-                        <Label className="mb-1">unit</Label>
+                        <Label className="mb-3">unit</Label>
                         <Controller
                             name="productUnit"
                             control={control}
