@@ -378,7 +378,7 @@ export default function IngredientForm() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-4 justify-start pt-1">
+                    <div className="flex flex-col gap-8 justify-start pt-1">
                         <Controller
                             name="glutenFree"
                             control={control}
@@ -388,7 +388,7 @@ export default function IngredientForm() {
                             }}
                             render={({ field }) => (
                                 <div>
-                                    <Label className="block mb-1">gluten free?</Label>
+                                    <Label className="block mb-3">gluten free?</Label>
                                     <RadioGroup
                                         value={field.value?.toString() ?? ""}
                                         onValueChange={(value) => field.onChange(value === "true")}
@@ -446,7 +446,7 @@ export default function IngredientForm() {
                             }}
                             render={({ field }) => (
                                 <div>
-                                    <Label className="block mb-1">soy free?</Label>
+                                    <Label className="block mb-3">soy free?</Label>
                                     <RadioGroup
                                         value={field.value?.toString() ?? ""}
                                         onValueChange={(value) => field.onChange(value === "true")}
